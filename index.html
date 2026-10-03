@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>aimbooster</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+<script defer src="appearance.js"></script>
+<script defer src="sketch.js"></script>
+</head>
+<body>
+<main>
+<header><h1>aimbooster</h1><div class="header-actions"><button id="appearanceButton" type="button">appearance</button><button id="sound" aria-pressed="false">sound off</button></div></header>
+<section id="menu">
+<h2 id="selectedMode">challenge</h2>
+<p id="description"></p>
+<form id="settings">
+<div class="actions start-actions"><button id="start" class="primary" type="submit">play challenge</button><span id="best"></span></div>
+<details id="trainingModes"><summary>training &amp; custom</summary><nav id="modes" aria-label="Training mode"></nav></details>
+<div id="trainingSettings" hidden>
+<div id="fields" class="fields"></div>
+<details id="advancedSettings"><summary>advanced settings</summary><div id="advanced" class="fields"></div></details>
+<div class="actions"><button type="button" id="reset">reset settings</button></div>
+</div>
+<details id="shareSettings"><summary>import / export settings</summary>
+<p class="muted">copy this short code to save or share these settings.</p>
+<textarea id="settingsCode" rows="3" spellcheck="false" aria-label="settings code"></textarea>
+<div class="actions"><button type="button" id="exportSettings">export code</button><button type="button" id="importSettings">import code</button><span id="settingsMessage" aria-live="polite"></span></div>
+</details>
+
+</form>
+</section>
+<section id="game" hidden>
+<div class="hud"><span id="modeLabel"></span><span id="time">0.00 s</span><span id="accuracy">—</span><span id="lives"></span></div>
+<div class="arena"><canvas id="canvas" width="600" height="420" tabindex="0" aria-label="aim training playfield. point at targets and click."></canvas><button id="resume" hidden>paused · resume</button></div>
+<div class="actions"><button id="pause">pause</button><button id="retry">retry</button><button id="end">finish</button><span id="rate"></span></div>
+</section>
+<section id="results" hidden aria-live="polite">
+<h2 id="resultTitle">results</h2>
+<div id="resultStats" class="stats"></div>
+<canvas id="graph" width="600" height="120" aria-label="response time graph"></canvas>
+<p class="muted">response time · each successful shot · milliseconds</p>
+<div class="actions"><button class="primary" id="again">retry</button><button id="back">back to setup</button><button id="download">download results · csv</button></div>
+</section>
+
+</main>
+<dialog id="appearanceDialog" aria-labelledby="appearanceTitle">
+<div class="dialog-heading"><h2 id="appearanceTitle">appearance</h2><button id="closeAppearance" type="button">done</button></div>
+<p class="muted">saved automatically on this browser.</p>
+<div class="appearance-preview" aria-label="live appearance preview"><span class="preview-target"><span class="preview-ring"></span><img id="cursorPreview" width="32" height="32" alt="crosshair preview"></span><span>target &amp; crosshair</span></div>
+<form id="appearanceForm"><div id="appearanceFields" class="fields"></div></form>
+<p class="muted">border radius: 100% follows the circle’s edge; smaller values move the ring inward. border width 0 hides it.</p>
+<details><summary>import / export appearance</summary>
+<label for="appearanceCode" class="muted">paste an appearance code here.</label>
+<textarea id="appearanceCode" rows="3" spellcheck="false"></textarea>
+<div class="actions"><button type="button" id="exportAppearance">export code</button><button type="button" id="importAppearance">import code</button></div>
+</details>
+<div class="actions"><button type="button" id="resetAppearance">reset appearance</button><span id="appearanceMessage" role="status"></span></div>
+</dialog>
+</body>
+</html>
