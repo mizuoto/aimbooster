@@ -89,13 +89,6 @@ nav button[aria-pressed="true"] {
   color: var(--white);
   border-color: var(--white);
 }
-#description {
-  color: var(--white);
-  line-height: 1.5;
-  min-height: 48px;
-  font-size: 15px;
-  font-weight: var(--font-weight);
-}
 .fields {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -247,9 +240,6 @@ summary {
 
 #selectedMode {
   margin: 0 0 12px;
-}
-#description {
-  min-height: 0;
 }
 #trainingModes > summary,
 #shareSettings > summary {

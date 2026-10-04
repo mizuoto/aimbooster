@@ -148,24 +148,6 @@ const presets = {
   },
   Custom: {},
 };
-const descriptions = {
-  Challenge: "click before targets vanish · 3 lives · increasing speed",
-  Speed: "clear targets before they vanish · misclick removes nearest",
-  Precision: "small targets · precise clicks",
-  "Twitch shots": "brief targets · random timing",
-  "Double shot": "clear both targets before they vanish",
-  Sniping: "click small moving targets",
-  Reaction: "stay centered · click on appearance",
-  "Auto speed": "adaptive speed · 92% goal · unlimited lives",
-  "Auto size": "adaptive size · 92% goal · unlimited lives",
-  "Auto time": "adaptive lifetime · 75% goal · unlimited lives",
-  "Old challenge": "survive 60 s · 1 life",
-  "Whack-a-target": "5 targets · instant replacement · 40 s",
-  "Clicks per minute": "click the center · 30 s",
-  Tracking: "repeat clicks on moving targets · 60 s",
-  "Can't touch this": "hover to hit · 30 s",
-  Custom: "choose your settings · time limit 0 = unlimited",
-};
 const fieldSpecs = [
   ["rate", "targets / second", 0.001, 99, 0.001],
   ["radius", "radius · px", 1, 150, 1],
@@ -256,7 +238,6 @@ function selectMode(name) {
     .forEach((b) =>
       b.setAttribute("aria-pressed", b.textContent === name.toLowerCase()),
     );
-  $("description").textContent = descriptions[name].toLowerCase();
   $("selectedMode").textContent = name.toLowerCase();
   $("start").textContent =
     name === "Challenge" ? "play challenge" : "start training";
