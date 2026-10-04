@@ -33,20 +33,20 @@ const appearanceKey = "aimbooster-appearance";
 const ap = (id) => document.getElementById(id);
 function validateAppearance(data) {
   if (!data || typeof data !== "object" || Array.isArray(data))
-    throw Error("invalid appearance settings.");
+    throw Error("invalid appearance settings");
   const next = { ...appearanceDefaults };
   for (const [key, , min, max] of appearanceSpecs) {
     if (!Object.hasOwn(data, key)) continue;
     const value = data[key];
     if (typeof appearanceDefaults[key] === "string") {
       if (typeof value !== "string" || !/^#[0-9a-f]{6}$/i.test(value))
-        throw Error(`invalid ${key} colour.`);
+        throw Error(`invalid ${key} colour`);
     } else if (
       typeof value !== "number" ||
       !Number.isInteger(value) ||
       (Array.isArray(min) ? !min.includes(value) : value < min || value > max)
     )
-      throw Error(`invalid ${key} value.`);
+      throw Error(`invalid ${key} value`);
     next[key] = value;
   }
   return next;
@@ -84,7 +84,7 @@ function persistAppearance() {
   } catch {}
   ap("appearanceMessage").textContent = stored
     ? "saved"
-    : "storage unavailable · export a code to keep these settings.";
+    : "storage unavailable · export to save";
   return stored;
 }
 function applyAppearance() {
@@ -177,9 +177,9 @@ ap("exportAppearance").onclick = async () => {
   box.select();
   try {
     await navigator.clipboard.writeText(code);
-    ap("appearanceMessage").textContent = "appearance code copied";
+    ap("appearanceMessage").textContent = "code copied";
   } catch {
-    ap("appearanceMessage").textContent = "code ready · select and copy";
+    ap("appearanceMessage").textContent = "select and copy code";
   }
 };
 ap("importAppearance").onclick = () => {
@@ -196,10 +196,9 @@ ap("importAppearance").onclick = () => {
     syncAppearanceFields();
     applyAppearance();
     if (persistAppearance())
-      ap("appearanceMessage").textContent = "appearance imported and saved";
+      ap("appearanceMessage").textContent = "imported · saved";
   } catch {
-    ap("appearanceMessage").textContent =
-      "invalid appearance code. paste a complete aba1. code.";
+    ap("appearanceMessage").textContent = "invalid appearance code";
   }
 };
 syncAppearanceFields();

@@ -149,36 +149,22 @@ const presets = {
   Custom: {},
 };
 const descriptions = {
-  Challenge:
-    "Click targets before they disappear. Three lives. The spawn rate gradually increases.",
-  Speed:
-    "Clear growing targets before they shrink away. A misclick removes the nearest target.",
-  Precision:
-    "Small targets, precise clicks. Each target stays for 0.85 seconds.",
-  "Twitch shots":
-    "React to brief targets appearing at unpredictable intervals.",
-  "Double shot": "Two targets at a time. Clear both before they disappear.",
-  Sniping: "Small moving targets. Lead your cursor, then click.",
-  Reaction:
-    "Keep your cursor in the center. Click as soon as a target appears.",
-  "Auto speed":
-    "Spawn rate adapts to your performance, aiming for 92% success. No life limit.",
-  "Auto size":
-    "Target size adapts to your performance, aiming for 92% success. No life limit.",
-  "Auto time":
-    "Target lifetime adapts to your performance, aiming for 75% success. No life limit.",
-  "Old challenge":
-    "The original linear challenge. Survive 60 seconds with one life.",
-  "Whack-a-target":
-    "Five targets stay on screen. Each hit spawns a replacement. You have 40 seconds.",
-  "Clicks per minute":
-    "Click the center target as often as possible in 30 seconds.",
-  Tracking:
-    "Repeatedly click moving targets. They stay alive until their lifetime ends. You have 60 seconds.",
-  "Can't touch this":
-    "Touch targets with your cursor. No clicking needed. You have 30 seconds.",
-  Custom:
-    "Set your own target behavior, timing, movement, and rules. Zero time limit means an open session.",
+  Challenge: "click before targets vanish · 3 lives · increasing speed",
+  Speed: "clear targets before they vanish · misclick removes nearest",
+  Precision: "small targets · precise clicks",
+  "Twitch shots": "brief targets · random timing",
+  "Double shot": "clear both targets before they vanish",
+  Sniping: "click small moving targets",
+  Reaction: "stay centered · click on appearance",
+  "Auto speed": "adaptive speed · 92% goal · unlimited lives",
+  "Auto size": "adaptive size · 92% goal · unlimited lives",
+  "Auto time": "adaptive lifetime · 75% goal · unlimited lives",
+  "Old challenge": "survive 60 s · 1 life",
+  "Whack-a-target": "5 targets · instant replacement · 40 s",
+  "Clicks per minute": "click the center · 30 s",
+  Tracking: "repeat clicks on moving targets · 60 s",
+  "Can't touch this": "hover to hit · 30 s",
+  Custom: "choose your settings · time limit 0 = unlimited",
 };
 const fieldSpecs = [
   ["rate", "targets / second", 0.001, 99, 0.001],
@@ -821,7 +807,7 @@ $("exportSettings").onclick = async () => {
     else if (!document.execCommand("copy")) throw new Error("copy unavailable");
     $("settingsMessage").textContent = "code copied";
   } catch {
-    $("settingsMessage").textContent = "code ready · select and copy";
+    $("settingsMessage").textContent = "select and copy code";
   }
 };
 $("importSettings").onclick = () => {
@@ -884,7 +870,7 @@ $("importSettings").onclick = () => {
     }
     say(`${payload.mode.toLowerCase()} settings imported`);
   } catch (error) {
-    say(error.message || "could not import settings");
+    say("invalid settings code");
   }
 };
 $("sound").onclick = () => {

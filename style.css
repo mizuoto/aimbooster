@@ -178,7 +178,6 @@ summary {
 }
 .arena {
   position: relative;
-  border: 1px solid #272727;
   background: var(--field);
 }
 #canvas {

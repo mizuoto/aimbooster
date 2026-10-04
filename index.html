@@ -43,9 +43,7 @@
           </div>
           <details id="shareSettings">
             <summary>import / export settings</summary>
-            <p class="muted">
-              copy this short code to save or share these settings.
-            </p>
+            <p class="muted">save or share settings</p>
             <textarea
               id="settingsCode"
               rows="3"
@@ -71,7 +69,7 @@
             width="600"
             height="420"
             tabindex="0"
-            aria-label="aim training playfield. point at targets and click."
+            aria-label="click targets"
           ></canvas
           ><button id="resume" hidden>paused · resume</button>
         </div>
@@ -89,7 +87,6 @@
           height="120"
           aria-label="response time graph"
         ></canvas>
-        <p class="muted">response time · each successful shot · milliseconds</p>
         <div class="actions">
           <button class="primary" id="again">retry</button
           ><button id="back">back to setup</button
@@ -102,7 +99,7 @@
         <h2 id="appearanceTitle">appearance</h2>
         <button id="closeAppearance" type="button">done</button>
       </div>
-      <p class="muted">saved automatically on this browser.</p>
+      <p class="muted">saved automatically</p>
       <div class="appearance-preview" aria-label="live appearance preview">
         <span class="preview-target"
           ><span class="preview-ring"></span
@@ -116,15 +113,10 @@
       <form id="appearanceForm">
         <div id="appearanceFields" class="fields"></div>
       </form>
-      <p class="muted">
-        border radius: 100% follows the circle’s edge; smaller values move the
-        ring inward. border width 0 hides it.
-      </p>
+      <p class="muted">radius: 100% = edge · width: 0 = hidden</p>
       <details>
         <summary>import / export appearance</summary>
-        <label for="appearanceCode" class="muted"
-          >paste an appearance code here.</label
-        >
+        <label for="appearanceCode" class="muted">appearance code</label>
         <textarea id="appearanceCode" rows="3" spellcheck="false"></textarea>
         <div class="actions">
           <button type="button" id="exportAppearance">export code</button
