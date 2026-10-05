@@ -29,6 +29,7 @@ const defaults = {
   horizontal: 0.5,
   invisible: false,
   showMs: false,
+  ghosts: true,
   fade: true,
   seed: 0,
   balance: "none",
@@ -146,11 +147,44 @@ const presets = {
     missLife: false,
     showMs: true,
   },
+  "Tile frenzy": {
+    rate: 1,
+    increase: 0,
+    lifetime: 0,
+    radius: 42.5,
+    speed: 0,
+    constant: true,
+    nearest: false,
+    instant: true,
+    group: 3,
+    center: false,
+    random: false,
+    maxDistance: 0,
+    lives: 3,
+    clickLife: false,
+    missLife: false,
+    clear: false,
+    duration: 30,
+    width: 600,
+    height: 420,
+    balance: "none",
+    accuracy: 0.95,
+    invisible: false,
+    hover: false,
+    hp: 1,
+    overlap: true,
+    showMs: false,
+    fade: true,
+    absolute: false,
+    variation: 0.3,
+    horizontal: 0.5,
+    seed: 0,
+  },
   Custom: {},
 };
 const fieldSpecs = [
   ["rate", "targets / second", 0.001, 99, 0.001],
-  ["radius", "radius · px", 1, 150, 1],
+  ["radius", "radius · px", 1, 150, 0.5],
   ["lifetime", "lifetime · s (0 = ∞)", 0, 60, 0.05],
   ["duration", "time limit · s (0 = ∞)", 0, 3600, 1],
   ["lives", "lives (0 = ∞)", 0, 99, 1],
@@ -179,6 +213,7 @@ const fieldSpecs = [
   ["absolute", "speed in pixels / s"],
   ["invisible", "hide cursor"],
   ["showMs", "show response time"],
+  ["ghosts", "target ghosts"],
   ["fade", "fade constant targets"],
 ];
 let saved = {};
@@ -316,6 +351,7 @@ function start(c = readConfig(), name = mode) {
     t: 0,
     targets: [],
     effects: [],
+    ghosts: [],
     shots: [],
     hits: 0,
     clicks: 0,
@@ -470,6 +506,20 @@ function remove(t) {
   const i = run.targets.indexOf(t);
   if (i >= 0) run.targets.splice(i, 1);
 }
+// Original Target.clickAway / TargetGhost: only final clicks leave ghosts
+// Meta-stepper lifetime continues while gameplay is paused
+function ghost(target, hit, x, y) {
+  if (!run.c.ghosts) return;
+  run.ghosts.push({
+    x: target.x,
+    y: target.y,
+    r: radius(target),
+    hit,
+    shotX: x,
+    shotY: y,
+    until: performance.now() + (hit ? 500 : 1500),
+  });
+}
 function effect(x, y, hit, text = "") {
   run.effects.push({ x, y, hit, text, at: run.t });
   if (run.effects.length > 60) run.effects.shift();
@@ -501,7 +551,10 @@ function shoot(x, y, hover = false) {
     adapt(true);
     tone(true);
     if (c.showMs) effect(target.x, target.y, true, `${Math.round(ms)} ms`);
-    if (target.hp > 0 && --target.hp === 0) remove(target);
+    if (target.hp > 0 && --target.hp === 0) {
+      ghost(target, true, x, y);
+      remove(target);
+    }
   } else {
     run.shots.push({ time: run.t, hit: false, x, y });
     effect(x, y, false);
@@ -514,7 +567,10 @@ function shoot(x, y, hover = false) {
           ? a
           : b,
       );
-      if (nearest.hp > 0 && --nearest.hp === 0) remove(nearest);
+      if (nearest.hp > 0 && --nearest.hp === 0) {
+        ghost(nearest, false, x, y);
+        remove(nearest);
+      }
       run.removed++;
       if (!c.clickLife && c.missLife) loseLife();
     }
@@ -570,7 +626,29 @@ function draw() {
   const c = run.c;
   ctx.fillStyle = appearance.field;
   ctx.fillRect(0, 0, c.width, c.height);
+  run.ghosts = run.ghosts.filter((g) => performance.now() < g.until);
   if (state !== "paused") {
+    for (const g of run.ghosts) {
+      if (g.hit) {
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(g.shotX, g.shotY, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = g.hit ? 0.1 : 0.2;
+      ctx.fillStyle = g.hit ? appearance.hitGhost : appearance.missGhost;
+      const width = Math.min(appearance.borderWidth, g.r);
+      ctx.beginPath();
+      ctx.arc(g.x, g.y, Math.max(0, g.r + 1 - width / 2), 0, Math.PI * 2);
+      ctx.fill();
+      if (width > 0) {
+        ctx.strokeStyle = g.hit ? "#ffffff" : "#ff0000";
+        ctx.lineWidth = width;
+        ctx.stroke();
+        ctx.lineWidth = 1;
+      }
+    }
     for (const t of run.targets) {
       const r = radius(t);
       if (r <= 0) continue;
