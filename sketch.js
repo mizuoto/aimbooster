@@ -509,7 +509,11 @@ function remove(t) {
 // Original Target.clickAway / TargetGhost: only final clicks leave ghosts
 // Meta-stepper lifetime continues while gameplay is paused
 function ghost(target, hit, x, y) {
-  if (!run.c.ghosts) return;
+  if (
+    !run.c.ghosts ||
+    !(hit ? appearance.showHitGhosts : appearance.showMissGhosts)
+  )
+    return;
   run.ghosts.push({
     x: target.x,
     y: target.y,
@@ -626,7 +630,11 @@ function draw() {
   const c = run.c;
   ctx.fillStyle = appearance.field;
   ctx.fillRect(0, 0, c.width, c.height);
-  run.ghosts = run.ghosts.filter((g) => performance.now() < g.until);
+  run.ghosts = run.ghosts.filter(
+    (g) =>
+      performance.now() < g.until &&
+      (g.hit ? appearance.showHitGhosts : appearance.showMissGhosts),
+  );
   if (state !== "paused") {
     for (const g of run.ghosts) {
       if (g.hit) {

@@ -6,6 +6,8 @@ const appearanceDefaults = {
   background: "#000000",
   field: "#070707",
   target: "#ffffff",
+  showHitGhosts: true,
+  showMissGhosts: true,
   hitGhost: "#003399",
   missGhost: "#110000",
   border: "#00ffe6",
@@ -23,6 +25,8 @@ const appearanceSpecs = [
   ["background", "page background"],
   ["field", "playfield background"],
   ["target", "circle fill"],
+  ["showHitGhosts", "show hit ghosts"],
+  ["showMissGhosts", "show miss ghosts"],
   ["hitGhost", "hit ghost"],
   ["missGhost", "miss ghost"],
   ["border", "circle border"],
@@ -42,7 +46,9 @@ function validateAppearance(data) {
   for (const [key, , min, max] of appearanceSpecs) {
     if (!Object.hasOwn(data, key)) continue;
     const value = data[key];
-    if (typeof appearanceDefaults[key] === "string") {
+    if (typeof appearanceDefaults[key] === "boolean") {
+      if (typeof value !== "boolean") throw Error(`invalid ${key} value`);
+    } else if (typeof appearanceDefaults[key] === "string") {
       if (typeof value !== "string" || !/^#[0-9a-f]{6}$/i.test(value))
         throw Error(`invalid ${key} colour`);
     } else if (
@@ -92,6 +98,8 @@ function persistAppearance() {
   return stored;
 }
 function applyAppearance() {
+  ap("appearance-hitGhost").disabled = !appearance.showHitGhosts;
+  ap("appearance-missGhost").disabled = !appearance.showMissGhosts;
   const root = document.documentElement.style;
   for (const [name, value] of Object.entries({
     "--cyan": appearance.accent,
@@ -125,8 +133,11 @@ function applyAppearance() {
   window.dispatchEvent(new Event("appearancechange"));
 }
 function syncAppearanceFields() {
-  for (const [key] of appearanceSpecs)
-    ap("appearance-" + key).value = appearance[key];
+  for (const [key] of appearanceSpecs) {
+    const input = ap("appearance-" + key);
+    if (input.type === "checkbox") input.checked = appearance[key];
+    else input.value = appearance[key];
+  }
 }
 for (const [key, label, min, max] of appearanceSpecs) {
   const row = document.createElement("label"),
@@ -135,6 +146,8 @@ for (const [key, label, min, max] of appearanceSpecs) {
   input.id = "appearance-" + key;
   if (Array.isArray(min))
     min.forEach((value) => input.add(new Option(String(value), String(value))));
+  else if (typeof appearanceDefaults[key] === "boolean")
+    input.type = "checkbox";
   else if (typeof appearanceDefaults[key] === "string") input.type = "color";
   else {
     input.type = "number";
@@ -146,15 +159,36 @@ for (const [key, label, min, max] of appearanceSpecs) {
   input.addEventListener("input", () => {
     if (!input.checkValidity()) return;
     const value =
-      typeof appearanceDefaults[key] === "string"
-        ? input.value
-        : Number(input.value);
+      input.type === "checkbox"
+        ? input.checked
+        : typeof appearanceDefaults[key] === "string"
+          ? input.value
+          : Number(input.value);
     appearance = validateAppearance({ ...appearance, [key]: value });
     applyAppearance();
     persistAppearance();
   });
   row.append(input);
   ap("appearanceFields").append(row);
+}
+for (const [colourKey, toggleKey] of [
+  ["hitGhost", "showHitGhosts"],
+  ["missGhost", "showMissGhosts"],
+]) {
+  const colour = ap("appearance-" + colourKey);
+  const toggle = ap("appearance-" + toggleKey);
+  const colourLabel = colour.parentElement;
+  const toggleRow = toggle.parentElement;
+  const row = document.createElement("div");
+  row.className = "ghost-colour-row";
+  colourLabel.htmlFor = colour.id;
+  toggle.setAttribute("aria-label", toggleRow.textContent.trim());
+  colourLabel.replaceWith(row);
+  const controls = document.createElement("div");
+  controls.className = "ghost-colour-controls";
+  controls.append(toggle, colour);
+  row.append(colourLabel, controls);
+  toggleRow.remove();
 }
 ap("appearanceForm").onsubmit = (e) => e.preventDefault();
 ap("appearanceButton").onclick = () => {

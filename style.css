@@ -363,3 +363,19 @@ textarea:focus-visible {
   outline: 2px solid var(--white);
   outline-offset: 3px;
 }
+
+.ghost-colour-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.ghost-colour-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#appearanceFields input[type="color"]:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
